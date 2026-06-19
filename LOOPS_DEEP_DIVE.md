@@ -94,7 +94,7 @@ Plot any tool's loops on *continuation driver* (×) and *locus* (y) and they all
 - *Map position:* Antigravity `/goal` top-right (cloud + verification), `/schedule` top-left (cloud + trigger).
 
 ### Cursor *(and the broader field)*
-- **Automations** — scheduled / triggered background work (top-left: cloud + trigger). *(Exact current capabilities move quickly — verify.)*
+- **Automations** — cloud agents that run **on a schedule or in response to events** (GitHub, Slack, Linear, webhooks, PagerDuty…); each spins up a sandbox, follows your instructions, and **verifies its own output**. Trigger-gated and cloud-persistent → top-left (cloud + trigger). Cursor's own security team runs a fleet of these reviewing thousands of PRs a week.
 - The pattern is wider than these four — other editors and agent frameworks are adding the same loop primitive. The point of the episode is the **convergence**, not an exhaustive census.
 
 ### Side-by-side
@@ -104,7 +104,7 @@ Plot any tool's loops on *continuation driver* (×) and *locus* (y) and they all
 | **Claude Code** | `/goal`, `/loop`, Routines | goal + trigger | independent judge model | in-session + cloud |
 | **OpenAI Codex** | Goal mode | goal | tests-until-green | cloud |
 | **Google Antigravity** | `/goal`, `/schedule` | goal + trigger | human-audited artifacts | cloud |
-| **Cursor** | Automations | trigger | *(scheduled run — verify)* | cloud |
+| **Cursor** | Automations | trigger (schedule / event) | self-verifies its output | cloud |
 
 ---
 
@@ -120,6 +120,7 @@ So — **which loop are you running?**
 
 ## Sources & further reading
 - **OpenAI, "Using Goals in Codex"** — the official Goals guide; completion is evidence-based: *"A Goal should not be marked complete because the model believes it is probably done… the evidence decides whether it is done."* → https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex
+- **Cursor, "Automations"** — official docs; scheduled/event-triggered cloud agents that verify their own output → https://cursor.com/docs/cloud-agent/automations
 - **Boris Cherny (creator of Claude Code), on writing loops instead of prompts** — *"I don't prompt Claude anymore. I have loops that are running."* → https://officechai.com/ai/i-now-just-write-loops-to-prompt-claude-code-claude-code-creator-boris-cherny/
 - Each tool's own UI is captured in [`Screenshots/`](Screenshots/). Product specifics are as of **early 2026** and move fast — verify before quoting.
 
