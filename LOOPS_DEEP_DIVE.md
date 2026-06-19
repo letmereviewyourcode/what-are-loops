@@ -118,4 +118,11 @@ So — **which loop are you running?**
 
 ---
 
+## Sources & further reading
+- **OpenAI, "Using Goals in Codex"** — the official Goals guide; completion is evidence-based: *"A Goal should not be marked complete because the model believes it is probably done… the evidence decides whether it is done."* → https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex
+- **Boris Cherny (creator of Claude Code), on writing loops instead of prompts** — *"I don't prompt Claude anymore. I have loops that are running."* → https://officechai.com/ai/i-now-just-write-loops-to-prompt-claude-code-claude-code-creator-boris-cherny/
+- Each tool's own UI is captured in [`Screenshots/`](Screenshots/). Product specifics are as of **early 2026** and move fast — verify before quoting.
+
+---
+
 *Part of **Agents, Orchestrated** — a series on what makes agentic systems actually ship. Watch EP 01 (the 58-second video) for the short version; this guide is the long one. Spec for the video itself is in [`VIDEO_SPEC.md`](VIDEO_SPEC.md).*
