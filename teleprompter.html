@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loops — Voiceover Teleprompter</title>
+<style>
+  :root{
+    --stage:#0B0B0C; --card:#161618; --border:#2A2A2E;
+    --text:#F2F2F0; --muted:#9C9A92; --accent:#EF9F27; --teal:#1D9E75;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--stage);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;}
+  .wrap{height:100%;display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid var(--border);}
+  .timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;min-width:120px;}
+  .timer b{color:var(--accent)}
+  .obar{flex:1;height:8px;background:#222;border-radius:6px;overflow:hidden;}
+  .obar > i{display:block;height:100%;width:0;background:var(--teal);}
+  .btn{border:1px solid var(--border);background:#1c1c1f;color:var(--text);
+    border-radius:10px;padding:9px 16px;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn:hover{border-color:var(--accent)}
+  .main{flex:1;display:flex;min-height:0;}
+  .videoPane{width:38%;max-width:430px;border-right:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;background:#000;padding:14px;}
+  video{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .prompter{flex:1;display:flex;flex-direction:column;justify-content:center;
+    padding:40px 56px;position:relative;gap:22px;}
+  .scene{font-size:18px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .cueNo{color:var(--accent)}
+  .current{font-size:clamp(28px,3.4vw,46px);line-height:1.28;font-weight:600;}
+  .pace{height:10px;background:#222;border-radius:6px;overflow:hidden;}
+  .pace > i{display:block;height:100%;width:0;background:var(--accent);}
+  .next{font-size:clamp(17px,1.7vw,24px);color:var(--muted);line-height:1.35;}
+  .next b{color:#cfcdc6;font-weight:600}
+  .countLeft{position:absolute;top:28px;right:40px;font-size:46px;font-weight:800;
+    font-variant-numeric:tabular-nums;color:var(--muted);}
+  .countLeft.warn{color:var(--accent)}
+  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(11,11,12,.86);font-size:200px;font-weight:800;color:var(--accent);z-index:5;}
+  .overlay.go{font-size:120px;color:var(--teal)}
+  .hint{padding:10px 22px;border-top:1px solid var(--border);color:var(--muted);font-size:14px;text-align:center;}
+  kbd{background:#1c1c1f;border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:13px;}
+  .done .current{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="topbar">
+    <button class="btn" id="startBtn">▶ Start (Space)</button>
+    <button class="btn" id="resetBtn">↺ Reset (R)</button>
+    <div class="timer"><span id="tNow">0:00.0</span> / <b>0:58.0</b></div>
+    <div class="obar"><i id="overall"></i></div>
+    <button class="btn" id="vidBtn">Hide video</button>
+  </div>
+  <div class="main">
+    <div class="videoPane" id="videoPane">
+      <video id="vid" muted playsinline preload="auto" src="out/loops-vertical.mp4"></video>
+    </div>
+    <div class="prompter" id="prompter">
+      <div class="countLeft" id="countLeft"></div>
+      <div class="scene" id="scene">READY</div>
+      <div class="current" id="current">Press <kbd>Space</kbd> to begin. You'll get a 3·2·1, then say cue 1 on “GO”.</div>
+      <div class="pace"><i id="pace"></i></div>
+      <div class="next" id="next"></div>
+      <div class="overlay" id="overlay" style="display:none">3</div>
+    </div>
+  </div>
+  <div class="hint">Read so you finish each line as the amber bar empties. The video is locked to the same clock — watch it and you're on time. <kbd>Space</kbd> start/pause · <kbd>R</kbd> reset</div>
+</div>
+
+<script>
+const TOTAL = 58.0;
+const CUES = [
+  {s:0,  e:5,  scene:"1 · Hook",            t:"Boris Cherny, who created Claude Code, stopped writing code. He writes loops."},
+  {s:5,  e:10, scene:"2 · What a loop is",  t:"A loop is an agent that runs itself — generate, run, check, repeat."},
+  {s:10, e:16, scene:"3 · Claude Code",     t:"And every major tool now ships it. In Claude Code: slash-goal — a separate model confirms it's done."},
+  {s:16, e:23, scene:"4 · OpenAI Codex",    t:"Same command in OpenAI Codex. A goal adds a finish line, proof it's met, and a guardrail."},
+  {s:23, e:29, scene:"5 · Google Antigravity", t:"And again in Google Antigravity — run until the goal is finished, with artifacts you can audit."},
+  {s:29, e:34, scene:"6 · Prompt vs Goal",  t:"A prompt waits. A goal checks its own work — done by evidence, not vibes."},
+  {s:34, e:41, scene:"7 · Two questions",   t:"Two questions define any loop: what makes it continue — a trigger, or a verified goal — and where it lives."},
+  {s:41, e:50, scene:"8 · The map",         t:"Plot them, and every tool lands on the same map. Same loop — four labs, in months. The real differences are all about verification."},
+  {s:50, e:58, scene:"9 · Thesis + CTA",    t:"So when everything can loop, autonomy is table stakes — verification is the moat. Which loop are you running?"},
+];
+
+const $ = id => document.getElementById(id);
+const vid=$("vid"), overlay=$("overlay");
+let state="idle", t0=0, raf=0, countTimer=0;
+
+function fmt(s){ const m=Math.floor(s/60); const r=(s%60); return m+":"+r.toFixed(1).padStart(4,"0"); }
+
+function cueAt(t){ for(const c of CUES){ if(t>=c.s && t<c.e) return c; } return CUES[CUES.length-1]; }
+
+function render(elapsed){
+  elapsed=Math.max(0,Math.min(TOTAL,elapsed));
+  $("tNow").textContent=fmt(elapsed);
+  $("overall").style.width=(elapsed/TOTAL*100)+"%";
+  const c=cueAt(elapsed);
+  const idx=CUES.indexOf(c);
+  $("scene").innerHTML='<span class="cueNo">'+c.scene.split(" · ")[0]+'</span> · '+c.scene.split(" · ")[1];
+  $("current").textContent=c.t;
+  const nxt=CUES[idx+1];
+  $("next").innerHTML = nxt ? '<b>next:</b> '+nxt.t : '<b>— end —</b>';
+  const frac=Math.min(1,(elapsed-c.s)/(c.e-c.s));
+  $("pace").style.width=(frac*100)+"%";
+  const left=Math.max(0,Math.ceil(c.e-elapsed));
+  const cl=$("countLeft"); cl.textContent=left; cl.classList.toggle("warn",left<=2);
+}
+
+function loop(){
+  if(state!=="running") return;
+  const elapsed=(performance.now()-t0)/1000;
+  if(vid.readyState>=2){ const drift=Math.abs(vid.currentTime-elapsed); if(drift>0.25) vid.currentTime=elapsed; }
+  render(elapsed);
+  if(elapsed>=TOTAL){ state="done"; $("wrap").classList.add("done"); try{vid.pause()}catch(e){} return; }
+  raf=requestAnimationFrame(loop);
+}
+
+function begin(){
+  // 3-2-1-GO then start the clock
+  state="counting"; $("wrap").classList.remove("done");
+  let n=3; overlay.style.display="flex"; overlay.classList.remove("go"); overlay.textContent=n;
+  try{ vid.currentTime=0; }catch(e){}
+  countTimer=setInterval(()=>{
+    n--;
+    if(n>0){ overlay.textContent=n; }
+    else if(n===0){ overlay.textContent="GO"; overlay.classList.add("go"); }
+    else{
+      clearInterval(countTimer); overlay.style.display="none";
+      state="running"; t0=performance.now();
+      vid.play().catch(()=>{});
+      raf=requestAnimationFrame(loop);
+    }
+  },1000);
+}
+
+function reset(){
+  state="idle"; cancelAnimationFrame(raf); clearInterval(countTimer);
+  overlay.style.display="none"; $("wrap").classList.remove("done");
+  try{ vid.pause(); vid.currentTime=0; }catch(e){}
+  render(0); $("current").textContent="Press Space to begin. You'll get a 3·2·1, then say cue 1 on “GO”.";
+  $("scene").textContent="READY"; $("countLeft").textContent="";
+}
+
+function toggle(){ if(state==="idle"||state==="done") begin(); else if(state==="running"){ state="paused"; cancelAnimationFrame(raf); vid.pause(); } else if(state==="paused"){ state="running"; t0=performance.now()-(vid.currentTime*1000); vid.play().catch(()=>{}); raf=requestAnimationFrame(loop);} }
+
+$("startBtn").onclick=()=>{ if(state==="idle"||state==="done") begin(); };
+$("resetBtn").onclick=reset;
+$("vidBtn").onclick=()=>{ const p=$("videoPane"); const hidden=p.style.display==="none"; p.style.display=hidden?"flex":"none"; $("vidBtn").textContent=hidden?"Hide video":"Show video"; };
+document.addEventListener("keydown",e=>{ if(e.code==="Space"){ e.preventDefault(); toggle(); } if(e.key==="r"||e.key==="R"){ reset(); } });
+
+render(0);
+</script>
+</body>
+</html>

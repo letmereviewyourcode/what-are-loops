@@ -1,0 +1,30 @@
+# Spec-only public repo: share the brief, the deep-dive, and the result —
+# NOT the Remotion implementation (the craft stays private).
+
+# Implementation (the "magic sauce")
+/src/
+/public/
+node_modules/
+package.json
+package-lock.json
+tsconfig.json
+remotion.config.ts
+
+# Internal go-to-market strategy (the post itself lives on LinkedIn)
+POST.md
+
+# Personal / source + production media
+/Me - Zishan/
+/Zoom Background/
+/out/My video and audio/
+/out/loops-square.mp4
+/out/still-*.png
+/memory/
+
+# Unused / reference screenshots — keep only the 4 used as real UI
+/Screenshots/codex-goal-template.png
+/Screenshots/claude-code-web-version.png
+
+# OS
+.DS_Store
+**/.DS_Store
